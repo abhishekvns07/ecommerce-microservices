@@ -1,12 +1,10 @@
-services:
-  # Managed PostgreSQL Database
-  - type: postgres
-    name: ecommerce-db
-    env: postgres
-    plan: free
+databases:
+  - name: ecommerce-db
     databaseName: ecommercedb
     user: postgres
+    plan: free
 
+services:
   # Auth Microservice on Render
   - type: web
     name: auth-service
