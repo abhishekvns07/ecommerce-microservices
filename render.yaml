@@ -1,7 +1,7 @@
 databases:
   - name: ecommerce-db
     databaseName: ecommercedb
-    user: postgres
+    user: ecomuser
     plan: free
 
 services:
