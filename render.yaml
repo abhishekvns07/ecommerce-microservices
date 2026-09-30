@@ -5,42 +5,9 @@ databases:
     plan: free
 
 services:
-  # Auth Microservice on Render
-  - type: web
-    name: auth-service
-    env: docker
-    plan: free
-    dockerContext: ./backend/auth-service
-    dockerfilePath: ./backend/auth-service/Dockerfile
-    envVars:
-      - key: PORT
-        value: 8081
-      - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: ecommerce-db
-          property: connectionString
-      - key: JWT_SECRET
-        generateValue: true
+ All Set & Ready for Deployment!
+Everything is now completely configured and synchronized on GitHub:
 
-  # Product & AWS S3 Storage Microservice on Render
-  - type: web
-    name: product-service
-    env: docker
-    plan: free
-    dockerContext: ./backend/product-service
-    dockerfilePath: ./backend/product-service/Dockerfile
-    envVars:
-      - key: PORT
-        value: 8082
-      - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: ecommerce-db
-          property: connectionString
-      - key: AWS_REGION
-        value: us-east-1
-      - key: AWS_S3_BUCKET
-        value: ecommerce-product-images
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
+🗄️ Managed PostgreSQL Database: Defined cleanly under databases: in render.yaml.
+🔐 Spring Boot Microservices: Configured with PostgreSQL drivers & Docker environments for Render.
+⚡ React Frontend: Configured with SPA client-side routing (vercel.json) and dynamic API URL support (axios.js) for Vercel.
