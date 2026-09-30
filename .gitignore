@@ -1,0 +1,25 @@
+# Target build folders
+**/target/
+*.jar
+*.war
+
+# Node dependencies & build output
+**/node_modules/
+**/dist/
+**/build/
+.output/
+
+# IDE & OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Local Environment files
+.env
+.env.local

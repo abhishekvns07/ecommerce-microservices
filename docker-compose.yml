@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build:
+      context: ./backend/eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - PORT=8761
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  product-db:
+    image: mysql:8.0
+    container_name: mysql-product-db
+    environment:
+      MYSQL_DATABASE: productdb
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  order-db:
+    image: mysql:8.0
+    container_name: mysql-order-db
+    environment:
+      MYSQL_DATABASE: orderdb
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  product-service:
+    build:
+      context: ./backend/product-service
+      dockerfile: Dockerfile
+    container_name: product-service
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://product-db:3306/productdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQLDialect
+    depends_on:
+      eureka-server:
+        condition: service_started
+      product-db:
+        condition: service_healthy
+
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "8082:8082"
+    environment:
+      - PORT=8082
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://order-db:3306/orderdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQLDialect
+    depends_on:
+      eureka-server:
+        condition: service_started
+      order-db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend/ecommerce-react
+      dockerfile: Dockerfile
+    container_name: ecommerce-react-ui
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway

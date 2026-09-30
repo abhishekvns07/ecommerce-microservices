@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/auth/:path*",
+      "destination": "https://auth-service-render.onrender.com/api/auth/:path*"
+    },
+    {
+      "source": "/api/products/:path*",
+      "destination": "https://product-service-render.onrender.com/api/products/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
